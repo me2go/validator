@@ -1,0 +1,43 @@
+#+title: validator设计
+* 介绍
+用于对struct进行校验的golang库
+- 支持嵌套校验
+- 支持自定义tag, 并提供以下内置tag:
+** >/>=
+- Integer
+- Float
+- String
+- 可以引用其它域
+** </<=
+- Integer
+- Float
+- String
+- 可以引用其它域
+** nonzero
+- 所有类型
+** regexp
+- string
+** ==
+- 所有comparable类型
+- 可以引用其它域
+** !=
+- 所有comparable类型
+- 可以引用其它域
+* 类图
+#+begin_src plantuml :file classes.png
+class TagType<<int>>
+interface TagHandler
+TagHandler : Match(string) bool
+TagHandler : Handle(string) error
+
+class Tag {
++ ID string
++ Kind TagType
++ Handler TagHandler
+}
+Tag -u-> TagType
+Tag -u-> TagFun
+#+end_src
+
+#+RESULTS:
+[[file:classes.png]]
