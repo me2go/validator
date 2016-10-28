@@ -28,3 +28,145 @@ func TestHasTag(t *testing.T) {
 		t.Error("the test tag does not exist")
 	}
 }
+func TestValidate(t *testing.T) {
+	validator := NewValidator()
+	t.Run("test >", func(tv *testing.T) {
+		data := struct {
+			a int     `validator:">10"`
+			b float32 `validator:">10.1"`
+			c string  `validator:">5"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.a = 11
+			data.b = 11.0
+			data.c = "hello,world"
+			err := validator.Validate(data)
+			if err == nil {
+
+			} else {
+				tu.Error(err.Error())
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.a = 10
+			data.b = 10.1
+			data.c = "me123"
+			err := validator.Validate(data)
+			if err == LESS_THAN_MIN {
+				tu.Logf(err.Error())
+			} else {
+				tu.Fail()
+			}
+		})
+	})
+
+	t.Run("test >=", func(tv *testing.T) {
+		data := struct {
+			a int     `validator:">=10"`
+			b float32 `validator:">=10.1"`
+			c string  `validator:">=5"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.a = 10
+			data.b = 10.1
+			data.c = "hello"
+			err := validator.Validate(data)
+			if err == nil {
+
+			} else {
+				tu.Error(err.Error())
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.a = 9
+			data.b = 10.0
+			data.c = "me12"
+			err := validator.Validate(data)
+			if err == LESS_THAN_MIN {
+				tu.Logf(err.Error())
+			} else {
+				tu.Fail()
+			}
+		})
+	})
+
+	t.Run("test <", func(tv *testing.T) {
+		data := struct {
+			a int     `validator:"<10"`
+			b float32 `validator:"<10.1"`
+			c string  `validator:"<5"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.a = 9
+			data.b = 9.0
+			data.c = "me02"
+			err := validator.Validate(data)
+			if err != nil {
+				tu.Error(err.Error())
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.a = 10
+			data.b = 10.1
+			data.c = "me120"
+			err := validator.Validate(data)
+			if err == GREATER_THAN_MAX {
+				tu.Logf(err.Error())
+			} else {
+				tu.Fail()
+			}
+		})
+	})
+
+	t.Run("test <=", func(tv *testing.T) {
+		data := struct {
+			a int     `validator:"<=10"`
+			b float32 `validator:"<=10.1"`
+			c string  `validator:"<=5"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.a = 10
+			data.b = 10.1
+			data.c = "me023"
+			err := validator.Validate(data)
+			if err != nil {
+				tu.Error(err.Error())
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.a = 11
+			data.b = 10.2
+			data.c = "me1022"
+			err := validator.Validate(data)
+			if err == GREATER_THAN_MAX {
+				tu.Logf(err.Error())
+			} else {
+				tu.Fail()
+			}
+		})
+	})
+	t.Run("test regexp", func(tv *testing.T) {
+		data := struct {
+			phone string `validator:"regexp:^1(31|32|33|35|36|37|38|39|51|52|55|56|58|59|77|89)\\d{8}$"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.phone = "13133841509"
+			err := validator.Validate(data)
+			if err != nil {
+				tu.Error(err.Error())
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.phone = "1234567890"
+			err := validator.Validate(data)
+			if err == ERROR_REGEXP {
+				tu.Logf(err.Error())
+			} else {
+				if err != nil {
+					tu.Logf(err.Error())
+				}
+				tu.Fail()
+			}
+		})
+	})
+}

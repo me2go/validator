@@ -62,7 +62,7 @@ func compare(v reflect.Value, c string) (int, error) {
 		}
 	case reflect.Float32, reflect.Float64:
 		floatV := v.Float()
-		floatC, err := strconv.ParseFloat(c, 64)
+		floatC, err := strconv.ParseFloat(c, 32)
 		if err != nil {
 			return 0, err
 		} else {
@@ -76,9 +76,13 @@ func compare(v reflect.Value, c string) (int, error) {
 		}
 	case reflect.String:
 		strV := v.String()
-		if len(strV) < len(c) {
+		num, err := strconv.Atoi(c)
+		if err != nil {
+			return 0, err
+		}
+		if len([]rune(strV)) < num {
 			return -1, nil
-		} else if len(strV) == len(c) {
+		} else if len([]rune(strV)) == num {
 			return 0, nil
 		} else {
 			return 1, nil
@@ -90,7 +94,7 @@ func compare(v reflect.Value, c string) (int, error) {
 type greaterHandler struct{}
 
 func (g *greaterHandler) Match(s string) bool {
-	return strings.HasPrefix(s, ">")
+	return strings.HasPrefix(s, ">") && []rune(s)[1] >= '0' && []rune(s)[1] <= '9'
 }
 
 func (g *greaterHandler) Parse(s string) (string, TagKind, string) {
@@ -132,7 +136,7 @@ func (g *greaterOrEqualHandler) Check(v reflect.Value, c string) error {
 type lessHandler struct{}
 
 func (l *lessHandler) Match(s string) bool {
-	return strings.HasPrefix(s, "<")
+	return strings.HasPrefix(s, "<") && []rune(s)[1] >= '0' && []rune(s)[1] <= '9'
 }
 
 func (l *lessHandler) Parse(s string) (string, TagKind, string) {
