@@ -17,8 +17,8 @@ func NewValidator() *Validator {
 	v.RegisterTag(LESSOREQUAL)
 	v.RegisterTag(LESS)
 	v.RegisterTag(EQUAL)
-	v.RegisterTag(NONEQUAL)
-	v.RegisterTag(REGEXP)
+	//v.RegisterTag(NONEQUAL)
+	//v.RegisterTag(REGEXP)
 	v.RegisterTag(NONZERO)
 	return v
 }
@@ -69,7 +69,7 @@ func (v *Validator) validateField(f *reflect.StructField, fv *reflect.Value) err
 				continue
 			}
 			id, tagKind, tmp := tag.Handler.Parse(e)
-			if id != tag.ID || tagKind != tag.Kind || tmp == "" {
+			if id != tag.ID || tagKind != tag.Kind {
 				continue
 			}
 			if err := tag.Handler.Check(*fv, tmp); err != nil {

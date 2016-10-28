@@ -2,6 +2,7 @@ package validator
 
 import (
 	"errors"
+	"log"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -27,7 +28,7 @@ var (
 
 	REGEXP = NewTag("regexp", KEY, &regexpHandler{})
 
-	NONZERO = NewTag("nonzero", KEY, &nonequalHandler{})
+	NONZERO = NewTag("nonzero", WORD, &nonzeroHandler{})
 )
 
 func compare(v reflect.Value, c string) (int, error) {
@@ -246,6 +247,7 @@ func (r *nonzeroHandler) Parse(s string) (string, TagKind, string) {
 	return "nonzero", WORD, ""
 }
 func (r *nonzeroHandler) Check(v reflect.Value, c string) error {
+	log.Printf(v.String())
 	switch v.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		if v.Int() == 0 {

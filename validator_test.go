@@ -169,4 +169,36 @@ func TestValidate(t *testing.T) {
 			}
 		})
 	})
+	t.Run("test non-zero", func(tv *testing.T) {
+		data := struct {
+			str string      `validator:"nonzero"`
+			a   int         `validator:"nonzero"`
+			i   interface{} `validator:"nonzero"`
+		}{}
+		tv.Run("Success", func(tu *testing.T) {
+			data.str = "123"
+			data.a = 100
+			data.i = 10
+
+			err := validator.Validate(data)
+			if err != nil {
+				tu.Logf(err.Error())
+				tu.Fail()
+			}
+		})
+		tv.Run("Fail", func(tu *testing.T) {
+			data.str = ""
+			data.a = 0
+			data.i = nil
+			err := validator.Validate(data)
+			if err != ERROR_ZERO {
+				if err != nil {
+					tu.Logf(err.Error())
+				}
+				tu.Fail()
+			} else {
+				tu.Logf(err.Error())
+			}
+		})
+	})
 }
