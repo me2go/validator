@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "lvTfM1dTL9XvMDK3nNQGEFydrRE=",
+			"path": "github.com/me2go/schema",
+			"revision": "a55e53323f8863dcbad16d4aa2edc19c5dcf551c",
+			"revisionTime": "2017-02-08T08:20:21Z"
+		}
+	],
+	"rootPath": "github.com/me2go/validator"
+}
